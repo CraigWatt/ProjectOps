@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProjectOps</title>
+    <meta
+      name="description"
+      content="ProjectOps helps builders see what each project costs to run across cloud, subscriptions, domains, and shared tooling."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-one"></div>
+    <div class="bg-orb orb-two"></div>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <div class="brand">ProjectOps</div>
+          <div class="eyebrow">Operational and cost visibility for every project you run</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="ghost-button" id="reset-demo" type="button">Reset demo data</button>
+          <button class="primary-button" id="seed-fresh" type="button">Restore sample portfolio</button>
+        </div>
+      </header>
+
+      <main class="page-grid">
+        <section class="hero panel">
+          <div class="hero-copy">
+            <p class="kicker">Builder-first control plane</p>
+            <h1>See what your projects actually cost to run.</h1>
+            <p class="hero-text">
+              ProjectOps pulls cloud, SaaS, domain, observability, and AI spend into one operational
+              view so you can understand monthly burn, yearly run rate, and dead weight at a glance.
+            </p>
+            <div class="hero-actions">
+              <button class="primary-button" id="jump-create-project" type="button">Create project</button>
+              <button class="secondary-button" id="jump-add-cost" type="button">Add cost item</button>
+            </div>
+          </div>
+          <div class="hero-metric-card">
+            <div class="metric-label">Current monthly spend</div>
+            <div class="metric-value" id="hero-monthly">$0</div>
+            <div class="metric-footnote" id="hero-annual">Annualised run rate $0</div>
+            <div class="stacked-bars" id="hero-bars"></div>
+          </div>
+        </section>
+
+        <section class="kpi-grid" id="kpi-grid"></section>
+
+        <section class="content-grid">
+          <article class="panel panel-span-2">
+            <div class="panel-header">
+              <div>
+                <p class="panel-kicker">Portfolio</p>
+                <h2>Projects</h2>
+              </div>
+              <div class="panel-meta" id="project-meta"></div>
+            </div>
+            <div class="project-grid" id="project-grid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-kicker">Selected project</p>
+                <h2 id="detail-title">Project detail</h2>
+              </div>
+              <div class="pill" id="detail-status"></div>
+            </div>
+            <div class="detail-stack" id="project-detail"></div>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel panel-span-2">
+            <div class="panel-header">
+              <div>
+                <p class="panel-kicker">Inventory</p>
+                <h2>Cost items</h2>
+              </div>
+              <div class="filters">
+                <input id="search-costs" class="text-input" type="search" placeholder="Search cost items" />
+                <select id="filter-source" class="select-input">
+                  <option value="">All sources</option>
+                </select>
+                <select id="filter-category" class="select-input">
+                  <option value="">All categories</option>
+                </select>
+                <select id="filter-project" class="select-input">
+                  <option value="">All projects</option>
+                </select>
+                <select id="filter-billing" class="select-input">
+                  <option value="">All billing types</option>
+                </select>
+                <select id="filter-shared" class="select-input">
+                  <option value="">All costs</option>
+                  <option value="direct">Direct only</option>
+                  <option value="shared">Shared only</option>
+                  <option value="orphan">Orphaned only</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="table" id="cost-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Source</th>
+                    <th>Category</th>
+                    <th>Billing</th>
+                    <th>Assignment</th>
+                    <th class="num">Monthly</th>
+                    <th class="num">Yearly</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-kicker">Operator view</p>
+                <h2>Shared allocation</h2>
+              </div>
+            </div>
+            <div class="detail-stack" id="allocation-view"></div>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-kicker">Waste check</p>
+                <h2>Dead weight</h2>
+              </div>
+            </div>
+            <div class="detail-stack" id="waste-view"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-kicker">Setup</p>
+                <h2 id="project-form-title">Create project</h2>
+              </div>
+            </div>
+            <form id="project-form" class="form-stack">
+              <label>
+                <span>Name</span>
+                <input class="text-input" name="name" required placeholder="Streamflow" />
+              </label>
+              <label>
+                <span>Slug</span>
+                <input class="text-input" name="slug" placeholder="streamflow" />
+              </label>
+              <label>
+                <span>Description</span>
+                <textarea class="text-area" name="description" rows="3" placeholder="Streaming backend for creators"></textarea>
+              </label>
+              <div class="form-row">
+                <label>
+                  <span>Status</span>
+                  <select class="select-input" name="status">
+                    <option value="active">Active</option>
+                    <option value="paused">Paused</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Owner</span>
+                  <input class="text-input" name="owner" placeholder="Craig" />
+                </label>
+              </div>
+              <label>
+                <span>Tags</span>
+                <input class="text-input" name="tags" placeholder="infra, saas, side-project" />
+              </label>
+              <label>
+                <span>Environments</span>
+                <input class="text-input" name="environments" placeholder="dev, staging, prod" />
+              </label>
+              <label>
+                <span>Notes</span>
+                <textarea class="text-area" name="notes" rows="3" placeholder="Anything the next operator should know"></textarea>
+              </label>
+              <button class="primary-button" type="submit">Add project</button>
+            </form>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-kicker">Setup</p>
+                <h2>Add cost item</h2>
+              </div>
+            </div>
+            <form id="cost-form" class="form-stack">
+              <label>
+                <span>Name</span>
+                <input class="text-input" name="name" required placeholder="AWS ECS cluster" />
+              </label>
+              <div class="form-row">
+                <label>
+                  <span>Source</span>
+                  <input class="text-input" name="source" required placeholder="aws" />
+                </label>
+                <label>
+                  <span>Category</span>
+                  <select class="select-input" name="category">
+                    <option value="compute">Compute</option>
+                    <option value="storage">Storage</option>
+                    <option value="domain">Domain</option>
+                    <option value="observability">Observability</option>
+                    <option value="ai">AI</option>
+                    <option value="saas">SaaS</option>
+                    <option value="misc">Misc</option>
+                  </select>
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  <span>Billing type</span>
+                  <select class="select-input" name="billingType">
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="usage_based">Usage-based</option>
+                    <option value="one_off">One-off</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Amount</span>
+                  <input class="text-input" name="amount" type="number" min="0" step="0.01" required placeholder="29" />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  <span>Currency</span>
+                  <input class="text-input" name="currency" value="USD" />
+                </label>
+                <label>
+                  <span>Start date</span>
+                  <input class="text-input" name="startDate" type="date" />
+                </label>
+              </div>
+              <label>
+                <span>Renewal date</span>
+                <input class="text-input" name="renewalDate" type="date" />
+              </label>
+              <label>
+                <span>Project assignment</span>
+                <select class="select-input" name="projectId" id="cost-project-select"></select>
+              </label>
+              <label class="toggle-row">
+                <input type="checkbox" name="sharedCost" id="shared-toggle" />
+                <span>Shared cost</span>
+              </label>
+              <div class="allocation-editor hidden" id="allocation-editor">
+                <div class="allocation-editor-head">
+                  <span>Allocation rules</span>
+                  <button class="ghost-button compact" id="add-allocation-row" type="button">Add row</button>
+                </div>
+                <div id="allocation-rows"></div>
+              </div>
+              <label>
+                <span>Allocation method</span>
+                <select class="select-input" name="allocationMethod">
+                  <option value="direct">Direct</option>
+                  <option value="percentage">Percentage split</option>
+                  <option value="split_evenly">Split evenly</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </label>
+              <label>
+                <span>Notes</span>
+                <textarea class="text-area" name="notes" rows="3" placeholder="Usage notes, renewal context, or budget owner"></textarea>
+              </label>
+              <button class="primary-button" type="submit">Add cost item</button>
+            </form>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
