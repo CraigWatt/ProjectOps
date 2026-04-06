@@ -17,7 +17,8 @@ Open `index.html` in a browser. The app uses plain HTML, CSS, and JavaScript so 
 ## GitHub Pages
 
 The repository now includes a GitHub Pages workflow that deploys the static site from `main`.
-Once Pages is enabled in repository settings, every push to `main` will publish the latest MVP.
+With the Pages source set to `Actions`, every push to `main` will publish the latest MVP.
+The expected site URL is `https://craigwatt.github.io/ProjectOps/`.
 
 ## Notes
 
