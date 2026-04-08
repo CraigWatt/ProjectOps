@@ -17,8 +17,13 @@ Open `index.html` in a browser. The app uses plain HTML, CSS, and JavaScript so 
 ## GitHub Pages
 
 The repository now includes a GitHub Pages workflow that deploys the static site from `main`.
-With the Pages source set to `Actions`, every push to `main` will publish the latest MVP.
-The expected site URL is `https://craigwatt.github.io/ProjectOps/`.
+With the Pages source set to `Actions`, every push to `main` publishes the latest MVP.
+The expected live site URL is `https://craigwatt.github.io/ProjectOps/`.
+
+## Integration direction
+
+The first production data sources to connect are AWS and GoDaddy.
+CSV import stays in the loop as the manual fallback for providers that do not yet have an API connector.
 
 ## Notes
 

@@ -246,6 +246,35 @@ const sampleState = () => ({
       createdAt: "2025-02-11",
     },
   ],
+  integrations: [
+    {
+      id: "aws",
+      name: "AWS",
+      status: "planned",
+      source: "Cost Explorer / CUR",
+      purpose: "Primary cloud spend and account-level service mapping",
+      nextStep: "Pull monthly costs, then map services back to projects.",
+      bullets: ["Account and linked-account import", "Service-level cost grouping", "Shared platform allocation"],
+    },
+    {
+      id: "godaddy",
+      name: "GoDaddy",
+      status: "planned",
+      source: "Domains and renewals",
+      purpose: "Capture renewals, expiries, and ownership for project domains",
+      nextStep: "Import registered domains and annual renewal dates.",
+      bullets: ["Domain ownership", "Renewal tracking", "Amortised monthly run rate"],
+    },
+    {
+      id: "csv",
+      name: "CSV import",
+      status: "ready",
+      source: "Manual fallback",
+      purpose: "Bridge the gap before every provider has an API connector",
+      nextStep: "Allow simple recurring-cost imports from spreadsheets.",
+      bullets: ["Recurring cost rows", "Renewal amortisation", "Project assignment and allocation"],
+    },
+  ],
 };
 
 const state = loadState();
@@ -257,6 +286,8 @@ const dom = {
   heroBars: document.getElementById("hero-bars"),
   projectGrid: document.getElementById("project-grid"),
   projectMeta: document.getElementById("project-meta"),
+  integrationGrid: document.getElementById("integration-grid"),
+  integrationMeta: document.getElementById("integration-meta"),
   detailTitle: document.getElementById("detail-title"),
   detailStatus: document.getElementById("detail-status"),
   projectDetail: document.getElementById("project-detail"),
@@ -333,6 +364,8 @@ function normalizeCost(cost) {
 function statusLabel(status) {
   if (status === "active") return "Active";
   if (status === "paused") return "Paused";
+  if (status === "ready") return "Ready";
+  if (status === "planned") return "Planned";
   return "Archived";
 }
 
@@ -512,6 +545,7 @@ function render() {
   state.selectedProjectId = selectedProject.id;
 
   renderPortfolioKpis(portfolio);
+  renderIntegrations();
   renderProjectGrid(portfolio.projectRanking);
   renderProjectDetail(selectedProject);
   renderCostTable();
@@ -573,6 +607,34 @@ function renderPortfolioKpis(portfolio) {
   );
 
   dom.projectMeta.textContent = `${topProjects.length} highest-cost projects surfaced • ${recentChanges.length} recent changes`;
+}
+
+function renderIntegrations() {
+  const integrations = state.integrations || [];
+  dom.integrationGrid.innerHTML = "";
+  integrations.forEach((integration) => {
+    const card = document.createElement("article");
+    card.className = "integration-card";
+    card.innerHTML = `
+      <div class="integration-card-header">
+        <div>
+          <h3>${escapeHtml(integration.name)}</h3>
+          <p>${escapeHtml(integration.source)}</p>
+        </div>
+        <span class="pill ${integration.status === "ready" ? "good" : "warn"}">${escapeHtml(statusLabel(integration.status))}</span>
+      </div>
+      <p>${escapeHtml(integration.purpose)}</p>
+      <div class="integration-points">
+        ${integration.bullets.map((item) => `<div class="integration-point">${escapeHtml(item)}</div>`).join("")}
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Next step</div>
+        <div class="detail-value">${escapeHtml(integration.nextStep)}</div>
+      </div>
+    `;
+    dom.integrationGrid.appendChild(card);
+  });
+  dom.integrationMeta.textContent = `${integrations.length} sources mapped • AWS and GoDaddy first`;
 }
 
 function kpiCard(label, value, caption) {
